@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import {
   Table,
   TableBody,
@@ -33,8 +33,9 @@ type Session = {
   }
 }
 
-export default function MetricsTable({ data }: { data: Session[] }) {
+export default function MetricsTable({ data }: { data?: Session[] }) {
   const [expandedId, setExpandedId] = useState<number | null>(null)
+  const sessions = data ?? []
 
   const toggleExpand = (id: number) => {
     setExpandedId(expandedId === id ? null : id)
@@ -57,8 +58,8 @@ export default function MetricsTable({ data }: { data: Session[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((session) => (
-            <>
+          {sessions.map((session) => (
+            <React.Fragment key={session.id}>
               {/* Collapsed row */}
               <TableRow key={session.id}>
                 <TableCell>{session.id}</TableCell>
@@ -89,7 +90,7 @@ export default function MetricsTable({ data }: { data: Session[] }) {
                   </TableCell>
                 </TableRow>
               )}
-            </>
+            </React.Fragment>
           ))}
         </TableBody>
       </Table>
