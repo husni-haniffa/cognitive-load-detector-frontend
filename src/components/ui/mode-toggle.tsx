@@ -19,6 +19,7 @@ export function ModeToggle() {
       onClick={toggle}
       aria-pressed={isDark}
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      className="text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
     >
       {isDark ? (
         <Moon className="h-[1.2rem] w-[1.2rem]" />

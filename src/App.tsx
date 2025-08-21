@@ -27,8 +27,10 @@ function App() {
           <div className="w-full max-w-5xl mx-auto">{/* center and constrain header + content */}
             <div className="flex justify-between items-center mb-6 border-b-4 border-blue-500 pb-4">
               <header>
-                <Label className="text-xl">Current Cognitive State</Label>
-                <Label>Latest agregrated metrics score</Label>
+                  <div className="flex flex-col gap-1">
+                    <Label className="text-xl">Current Cognitive State</Label>
+                    <Label className="text-sm text-muted-foreground">Latest agregrated metrics score</Label>
+                  </div>
               </header>
               <Label>Last Updated 4.35 PM</Label>
             </div>

@@ -28,8 +28,8 @@ export const latestCognitiveState: any = {
             pause_rate: 0.10,
         },
         cognitive_state: {
-            score: 72,
-            label: "Medium",
+            score: 50,
+            label: "High",
         },
 }
  
