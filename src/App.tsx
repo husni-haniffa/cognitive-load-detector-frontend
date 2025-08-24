@@ -1,21 +1,23 @@
-import { Badge } from "./components/ui/badge"
 import CircularProgress from "./components/ui/circular-progress"
 import { Label } from "./components/ui/label"
 import MetricCard from "./components/ui/mertric-card"
 import MetricsTable from "./components/ui/metric-table"
-import { useGetCognitiveStateHistoryQuery, useGetLatestCognitiveStateQuery } from "./features/cognitive-state-API"
+import { useFetchLatestCognitiveStateQuery, useFetchCognitiveStateHistoryQuery } from "./features/cognitive-state-API"
 import Navbar from "./Navbar"
 
 
 function App() {
 
   const { data: latest, isLoading: isLatestLoading, isError: isLatestError } =
-    useGetLatestCognitiveStateQuery()
+    useFetchLatestCognitiveStateQuery()
   const { data: history, isLoading: isHistoryLoading, isError: isHistoryError } =
-    useGetCognitiveStateHistoryQuery()
+    useFetchCognitiveStateHistoryQuery()
 
   if (isLatestLoading || isHistoryLoading) return <p>Loading</p>
   if (isLatestError || isHistoryError) return <p>error</p>
+ 
+
+
    
   return (
     <>
@@ -36,11 +38,14 @@ function App() {
             </div>
             <div className="flex justify-center items-center gap-12">
               <div>
-                <CircularProgress state={latest.cognitive_state.label} score={latest.cognitive_state.score}/>
+                <CircularProgress 
+                  state={latest?.data?.cognitive_state_data?.[1] || "Unknown"} 
+                  score={latest?.data?.cognitive_state_data?.[0] || 0}
+                />
               </div>
               <div className="flex gap-6">
-                <MetricCard title="Facial Cue Data" values={latest.facial_cue_data} />
-                <MetricCard title="Keystroke Data" values={latest.keystroke_data} />
+                <MetricCard title="Facial Cue Data" values={latest?.data?.facial_cue_data || {}} />
+                <MetricCard title="Keystroke Data" values={latest?.data?.keystroke_data || {}} />
               </div>
             </div>
           </div>
@@ -49,7 +54,7 @@ function App() {
         <section className="mt-12">
             <div className="flex justify-center items-center">
               <div className="w-full max-w-5xl">{/* constrain table width so it centers without shrinking */}
-                <MetricsTable data={history}/>
+                <MetricsTable data={history?.data || []} />
               </div>
             </div>      
         </section>

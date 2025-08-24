@@ -1,29 +1,19 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { latestCognitiveState, cogitiveStateHistory } from '@/data';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { CognitiveStateResponse, CognitiveStateHistoryResponse } from "./cognitive-state-type";
 
-export const cognitiveApi = createApi({
-    reducerPath: 'cognitiveApi',
-    baseQuery: async ({ url }) => {
-        switch (url) {
-            case '/latest':
-                return { data: latestCognitiveState };
-            case '/history':
-                return { data: cogitiveStateHistory };
-            default:
-                return { error: { status: 404, data: 'Not Found' } };
-        }
-    },
+export const cognitiveStateApi = createApi({
+    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000" }),
     endpoints: (builder) => ({
-        getLatestCognitiveState: builder.query<any, void>({
-            query: () => ({ url: '/latest' }),
+        fetchLatestCognitiveState: builder.query<CognitiveStateResponse, void>({
+            query: () => "/latest",
         }),
-        getCognitiveStateHistory: builder.query<any[], void>({
-            query: () => ({ url: '/history' }),
+        fetchCognitiveStateHistory: builder.query<CognitiveStateHistoryResponse, void>({
+            query: () => "/history",
         }),
     }),
 });
 
 export const {
-    useGetLatestCognitiveStateQuery,
-    useGetCognitiveStateHistoryQuery,
-} = cognitiveApi;
+    useFetchLatestCognitiveStateQuery,
+    useFetchCognitiveStateHistoryQuery,
+} = cognitiveStateApi;
