@@ -13,5 +13,16 @@ export type CognitiveState = {
         error_rate: number
         pause_rate: number
     }
-    cognitive_state_data: [number, string] // [score, label]
+    cognitive_state_data: [number, string]
+}
+
+export type CognitiveStateResponse = {
+    data: CognitiveState
+    success: boolean
+}
+
+export type CognitiveStateHistoryResponse = {
+    count: number
+    data: CognitiveState[] 
+    success: boolean
 }

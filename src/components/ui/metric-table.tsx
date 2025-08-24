@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 import {
   Table,
   TableBody,
@@ -12,11 +12,10 @@ import {
 import { Button } from "@/components/ui/button"
 import MetricCard from "./mertric-card"
 import type { CognitiveState } from "@/features/cognitive-state-type"
-import React from "react"
-
 
 export default function MetricsTable({ data }: { data: CognitiveState[] }) {
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null) 
+
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id)
@@ -25,11 +24,9 @@ export default function MetricsTable({ data }: { data: CognitiveState[] }) {
   const formatTime = (iso: string) =>
     new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
 
-  // Ensure data is always an array
-  const tableData = Array.isArray(data) ? data : []
 
-  // If no data, show a message
-  if (tableData.length === 0) {
+
+  if (data.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
         <p>No cognitive state data available</p>
@@ -51,10 +48,13 @@ export default function MetricsTable({ data }: { data: CognitiveState[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tableData.map((session) => (
+          {data.map((session) => (
             <React.Fragment key={session.id}>
               {/* Collapsed row */}
-              <TableRow>
+              <TableRow
+                key={session.id}
+                className="hover:bg-muted/80 focus-within:bg-muted/80"
+              >
                 <TableCell>{session.id}</TableCell>
                 <TableCell>{formatTime(session.start_time)}</TableCell>
                 <TableCell>{formatTime(session.end_time)}</TableCell>
@@ -64,7 +64,8 @@ export default function MetricsTable({ data }: { data: CognitiveState[] }) {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => toggleExpand(session.id)}
+                    onClick={() => toggleExpand(session.id)} 
+                    className="hover:bg-accent/80 hover:text-accent-foreground dark:hover:bg-accent/70 dark:hover:text-white focus-visible:ring-ring/60"
                   >
                     {expandedId === session.id ? "Collapse" : "Expand"}
                   </Button>
@@ -75,11 +76,16 @@ export default function MetricsTable({ data }: { data: CognitiveState[] }) {
               {expandedId === session.id && (
                 <TableRow>
                   <TableCell colSpan={6}>
-                    <div className="flex gap-6">
-                        <MetricCard title="Facial Cues" values={session.facial_cue_data}/>
-                   <MetricCard title="KeyStroke" values={session.keystroke_data}/>
+                    <div className="flex flex-col md:flex-row gap-6">
+                      <MetricCard
+                        title="Facial Cues"
+                        values={session.facial_cue_data}
+                      />
+                      <MetricCard
+                        title="KeyStroke"
+                        values={session.keystroke_data}
+                      />
                     </div>
-                   
                   </TableCell>
                 </TableRow>
               )}
