@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
-import { cognitiveApi } from './features/cognitive-state-API'
+import { cognitiveStateApi } from './features/cognitive-state-API'
 
 export const store = configureStore({
     reducer: {
-        [cognitiveApi.reducerPath] : cognitiveApi.reducer,
+        [cognitiveStateApi.reducerPath]: cognitiveStateApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(cognitiveApi.middleware)
+        getDefaultMiddleware().concat(cognitiveStateApi.middleware)
 
 })
 

@@ -1,7 +1,7 @@
 import { useId } from "react"
 import { Badge } from "./badge"
 
-const CircularProgress = ({ state, score }: { state: string; score: number }) => {
+const CircularProgress = ({ score, label }: { score: number; label: string }) => {
   const pct = Math.max(0, Math.min(100, Math.round(score)))
   const size = 140
   const stroke = 12
@@ -10,9 +10,9 @@ const CircularProgress = ({ state, score }: { state: string; score: number }) =>
   const offset = circumference - (pct / 100) * circumference
 
   let badgeColor = "bg-green-500"
-  if (state === "Medium") {
+  if (label === "Medium") {
     badgeColor = "bg-yellow-500"
-  } else if (state === "High") {
+  } else if (label === "High") {
     badgeColor = "bg-red-500"
   }
 
@@ -61,7 +61,7 @@ const CircularProgress = ({ state, score }: { state: string; score: number }) =>
           <div className="text-xs text-gray-500 mt-1">Score</div>
         </div>
         <div className="flex justify-center mt-4">
-          <Badge className={badgeColor}>{state}</Badge>
+          <Badge className={badgeColor}>{label}</Badge>
         </div>
     </div>
     </div>

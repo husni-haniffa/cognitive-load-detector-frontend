@@ -1,21 +1,23 @@
-import { Badge } from "./components/ui/badge"
 import CircularProgress from "./components/ui/circular-progress"
 import { Label } from "./components/ui/label"
 import MetricCard from "./components/ui/mertric-card"
 import MetricsTable from "./components/ui/metric-table"
-import { useGetCognitiveStateHistoryQuery, useGetLatestCognitiveStateQuery } from "./features/cognitive-state-API"
+import { useFetchLatestCognitiveStateQuery, useFetchCognitiveStateHistoryQuery } from "./features/cognitive-state-API"
 import Navbar from "./Navbar"
 
 
 function App() {
 
   const { data: latest, isLoading: isLatestLoading, isError: isLatestError } =
-    useGetLatestCognitiveStateQuery()
+    useFetchLatestCognitiveStateQuery()
   const { data: history, isLoading: isHistoryLoading, isError: isHistoryError } =
-    useGetCognitiveStateHistoryQuery()
+    useFetchCognitiveStateHistoryQuery()
 
   if (isLatestLoading || isHistoryLoading) return <p>Loading</p>
   if (isLatestError || isHistoryError) return <p>error</p>
+   
+  // Ensure history is always an array
+  const historyData = Array.isArray(history) ? history : []
    
   return (
     <>
@@ -34,16 +36,19 @@ function App() {
 
         <section className="mt-12 grid grid-cols-2">
           <div className="bg-red-300">
-            <CircularProgress state={latest.cognitive_state.label} score={latest.cognitive_state.score}/>
+            <CircularProgress 
+              label={latest?.cognitive_state_data?.[1] || "Unknown"} 
+              score={latest?.cognitive_state_data?.[0] || 0}
+            />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <MetricCard title="Facial Cue Data" values={latest.facial_cue_data} />
-            <MetricCard title="Keystroke Data" values={latest.keystroke_data} />
+            <MetricCard title="Facial Cue Data" values={latest?.facial_cue_data || {}} />
+            <MetricCard title="Keystroke Data" values={latest?.keystroke_data || {}} />
           </div>
         </section>
 
         <section className="mt-12">
-            <MetricsTable data={history}/>
+            <MetricsTable data={historyData}/>
         </section>
 
     

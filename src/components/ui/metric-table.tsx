@@ -11,37 +11,31 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import MetricCard from "./mertric-card"
+import type { CognitiveState } from "@/features/cognitive-state-type"
+import React from "react"
 
-type Session = {
-  id: number
-  start_time: string
-  end_time: string
-  facial_cue_data: {
-    blink_count: number
-    yawn_count: number
-    gaze_direction_counts: Record<string, number>
-    expressions: Record<string, number>
-  }
-  keystroke_data: {
-    typing_speed: number
-    error_rate: number
-    pause_rate: number
-  }
-  cognitive_state: {
-    score: number
-    label: string
-  }
-}
 
-export default function MetricsTable({ data }: { data: Session[] }) {
-  const [expandedId, setExpandedId] = useState<number | null>(null)
+export default function MetricsTable({ data }: { data: CognitiveState[] }) {
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
-  const toggleExpand = (id: number) => {
+  const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id)
   }
 
   const formatTime = (iso: string) =>
     new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+
+  // Ensure data is always an array
+  const tableData = Array.isArray(data) ? data : []
+
+  // If no data, show a message
+  if (tableData.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        <p>No cognitive state data available</p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -57,15 +51,15 @@ export default function MetricsTable({ data }: { data: Session[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((session) => (
-            <>
+          {tableData.map((session) => (
+            <React.Fragment key={session.id}>
               {/* Collapsed row */}
-              <TableRow key={session.id}>
+              <TableRow>
                 <TableCell>{session.id}</TableCell>
                 <TableCell>{formatTime(session.start_time)}</TableCell>
                 <TableCell>{formatTime(session.end_time)}</TableCell>
-                <TableCell>{session.cognitive_state.score}</TableCell>
-                <TableCell>{session.cognitive_state.label}</TableCell>
+                <TableCell>{session.cognitive_state_data[0]}</TableCell>
+                <TableCell>{session.cognitive_state_data[1]}</TableCell>
                 <TableCell>
                   <Button
                     variant="outline"
@@ -89,7 +83,7 @@ export default function MetricsTable({ data }: { data: Session[] }) {
                   </TableCell>
                 </TableRow>
               )}
-            </>
+            </React.Fragment>
           ))}
         </TableBody>
       </Table>
