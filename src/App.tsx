@@ -1,7 +1,9 @@
 import CircularProgress from "./components/ui/circular-progress"
 import { Label } from "./components/ui/label"
+import { LoadingUI } from "./components/ui/loading"
 import MetricCard from "./components/ui/mertric-card"
 import MetricsTable from "./components/ui/metric-table"
+import { ServerErrorUI } from "./components/ui/server-error"
 import { useFetchLatestCognitiveStateQuery, useFetchCognitiveStateHistoryQuery } from "./features/cognitive-state-API"
 import Navbar from "./Navbar"
 
@@ -13,12 +15,9 @@ function App() {
   const { data: history, isLoading: isHistoryLoading, isError: isHistoryError } =
     useFetchCognitiveStateHistoryQuery()
 
-  if (isLatestLoading || isHistoryLoading) return <p>Loading</p>
-  if (isLatestError || isHistoryError) return <p>error</p>
- 
+  if (isLatestLoading || isHistoryLoading) return <LoadingUI/>
+  if (isLatestError || isHistoryError) return <ServerErrorUI/>
 
-
-   
   return (
     <>
       <Navbar/>
@@ -34,7 +33,14 @@ function App() {
                     <Label className="text-sm text-muted-foreground">Latest agregrated metrics score</Label>
                   </div>
               </header>
-              <Label>Last Updated 4.35 PM</Label>
+              <Label>
+                {latest?.data?.end_time &&
+                  new Date(latest.data.end_time).toLocaleTimeString([], {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}
+              </Label>
             </div>
             <div className="flex justify-center items-center gap-12">
               <div>

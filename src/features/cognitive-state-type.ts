@@ -26,3 +26,8 @@ export type CognitiveStateHistoryResponse = {
     data: CognitiveState[] 
     success: boolean
 }
+
+export type CognitiveLoadDetection = {
+    success: boolean
+    message: string
+}

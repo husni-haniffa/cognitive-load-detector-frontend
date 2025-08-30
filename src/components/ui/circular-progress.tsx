@@ -1,27 +1,63 @@
-import { useId } from "react"
-import { Badge } from "./badge"
+import { useId, useState, useEffect } from "react";
+import { Badge } from "./badge";
 
-const CircularProgress = ({ state, score }: { state: string; score: number }) => {
-  const pct = Math.max(0, Math.min(100, Math.round(score)))
-  const size = 140
-  const stroke = 12
-  const radius = (size - stroke) / 2
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (pct / 100) * circumference
+const CircularProgress = ({ state, score } : {state: string; score: number}) => {
+  const [currentScore, setCurrentScore] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
 
-  let badgeColor = "bg-green-500"
+  const duration = 1000
+  
+  const targetScore = Math.max(0, Math.min(100, Math.round(score)));
+  const size = 140;
+  const stroke = 12;
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  
+  // Calculate offset based on current animated score
+  const offset = circumference - (currentScore / 100) * circumference;
+
+  let badgeColor = "bg-green-500";
   if (state === "Medium") {
-    badgeColor = "bg-yellow-500"
+    badgeColor = "bg-yellow-500";
   } else if (state === "High") {
-    badgeColor = "bg-red-500"
+    badgeColor = "bg-red-500";
   }
 
-  const id = useId() // unique id for gradient
+  const id = useId();
 
-
+  useEffect(() => {
+    setIsAnimating(true);
+    setCurrentScore(0);
+    
+    const startTime = Date.now();
+    const startScore = 0;
+    
+    const animateScore = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth animation (ease-out)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const newScore = startScore + (targetScore - startScore) * easeOut;
+      
+      setCurrentScore(Math.round(newScore));
+      
+      if (progress < 1) {
+        requestAnimationFrame(animateScore);
+      } else {
+        setIsAnimating(false);
+      }
+    };
+    
+    const timeoutId = setTimeout(() => {
+      requestAnimationFrame(animateScore);
+    }); 
+    
+    return () => clearTimeout(timeoutId);
+  }, [targetScore, duration]);
 
   return (
-    <div aria-hidden={false} role="img" aria-label={`Cognitive state ${state} with score ${pct}` }>
+    <div aria-hidden={false} role="img" aria-label={`Cognitive state ${state} with score ${currentScore}`}>
       {/* Progress Circle Container */}
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -52,20 +88,22 @@ const CircularProgress = ({ state, score }: { state: string; score: number }) =>
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
-            style={{ transition: "stroke-dashoffset 0.6s ease" }}
+            style={{ 
+              transition: isAnimating ? "none" : "stroke-dashoffset 0.3s ease"
+            }}
           />
         </svg>
         {/* center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-3xl font-extrabold leading-none text-card-foreground">{pct}</div>
+          <div className="text-3xl font-extrabold leading-none text-card-foreground">{currentScore}</div>
           <div className="text-sm text-muted-foreground mt-1">Score</div>
         </div>
         <div className="flex justify-center mt-4">
           <Badge className={`${badgeColor} text-white dark:text-white`}>{state}</Badge>
         </div>
+      </div>
     </div>
-    </div>
-  )
-}
+  );
+};
 
-export default CircularProgress
+export default CircularProgress;
