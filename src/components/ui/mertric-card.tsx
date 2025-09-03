@@ -11,20 +11,12 @@ type MetricCardProps = {
   values: Record<string, any>
 }
 
-const formatKey = (str: string) => {
-  const formatted = String(str)
+const formatKey = (str: string) =>
+  String(str)
     .split("_")
     .filter(Boolean)
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ")
-  
-  // Add units for keystroke metrics
-  if (formatted === "Typing Speed") return "Typing Speed (keys/min)"
-  if (formatted === "Error Rate") return "Error Rate (%)"
-  if (formatted === "Pause Rate") return "Pause Rate (sec/key)"
-  
-  return formatted
-}
 
 
 const MetricCard = ({ title, values }: MetricCardProps) => {
@@ -50,10 +42,10 @@ const MetricCard = ({ title, values }: MetricCardProps) => {
                   </div>
                   <div className="text-sm font-semibold text-foreground">
                     {String(subValue)}
-                    {/* Add unit suffix for specific metrics */}
-                    {subKey === 'typing_speed' ? ' keys/min' :
-                     subKey === 'error_rate' ? '%' :
-                     subKey === 'pause_rate' ? ' sec/key' : ''}
+                    {/* Add units based on parent key context */}
+                    {key === 'keystroke_data' && subKey === 'typing_speed' ? ' keys/min' :
+                     key === 'keystroke_data' && subKey === 'error_rate' ? '%' :
+                     key === 'keystroke_data' && subKey === 'pause_rate' ? ' sec/key' : ''}
                   </div>
                 </div>
               ))}
@@ -69,7 +61,14 @@ const MetricCard = ({ title, values }: MetricCardProps) => {
           {formatKey(key)}
         </Badge>
         <div className="bg-muted/50 hover:bg-muted/80 transition-colors duration-200 px-3 py-2 rounded-lg border border-border/30 flex-1">
-          <div className="text-sm font-semibold text-foreground">{String(value)}</div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-lg font-bold text-foreground">{String(value)}</span>
+            <span className="text-xs text-muted-foreground font-medium">
+              {key === 'error_rate' ? '%' :
+               key === 'pause_rate' ? 'sec/key' :
+               key === 'typing_speed' ? 'keys/min' : ''}
+            </span>
+          </div>
         </div>
       </div>
     )
